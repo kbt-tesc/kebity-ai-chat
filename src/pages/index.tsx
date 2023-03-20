@@ -22,7 +22,7 @@
  * https://platform.openai.com/docs/api-reference/searches
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import Button from "../components/Button";
 import TextBox from "../components/TextBox";
 import axios from "axios";
@@ -34,46 +34,56 @@ interface chatMessageDisplayInterface {
   message: string
 }
 
+interface messageIdInterface {
+  messageId: number
+}
+
+interface messageIdAction {
+  type: string
+}
+
 const ChatGptApiTest = () => {
   const [chatMessages, setChatMessage] = useState<chatMessageDisplayInterface[]>([]);
-  const [idCounter, setMessageIdCount] = useState<number>(0);
   const [systemMessage, setSystemMessage] = useState<string>("");
   const [inputChatMessage, setInputChatMessage] = useState<string>("");
 
   const callAI = async () => {
+
     const system: string = systemMessage ? systemMessage : "";
     const chat: string = inputChatMessage ? inputChatMessage : "";
+
     listUp(chat, 'user');
 
-    const res = await axios.get(`/api/chatgpt?system=${encodeURI(system)}&chat=${encodeURI(chat)}`);
+    const res = await axios.get('/api/chatgpt',
+      {
+        params: {
+          system: encodeURI(system),
+          chat: encodeURI(chat)
+        }
+      }
+    );
 
     const data = await res.data;
     console.log(data);
     console.log(data.chat);
+
     listUp(data.chat, 'chat');
   };
 
   const listUp = (mes: string, type: string) => {
     setChatMessage((prevList) => {
-      upCountId();
-      const newList = [...prevList, { messageId: idCounter, type: type, message: mes.trim() }];
+      const newList = [...prevList, { messageId: prevList.length, type: type, message: mes.trim() }];
       return newList
     });
   };
 
-  const upCountId = () => {
-    setMessageIdCount((oldValue) => { return oldValue + 1 });
-  };
-
-  const getNtoBrMessage = (text: string) => {
+  const getNtoBrMessage = (mesId: number, text: string) => {
     return text.split('\n').map((line, index) => {
-      //ここのkeyのWarningの解消の仕方がよくわからない
       return (
-        // rome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-        <React.Fragment key={index}>
+        <React.Fragment key={`${mesId}_${index}`}>
           {line}
-          <br />
-        </React.Fragment>
+          < br />
+        </React.Fragment >
       );
     })
   }
@@ -98,9 +108,23 @@ const ChatGptApiTest = () => {
         {
           chatMessages.map(elm => {
             if (elm.type === "user") {
-              return (<><p className={styles.userChatMessages} key={elm.messageId}>{getNtoBrMessage(elm.message)}</p><hr className={styles.chatBoder} /></>)
+              return (
+                <React.Fragment key={elm.messageId}>
+                  <p className={styles.userChatMessages}>
+                    {elm.messageId} {getNtoBrMessage(elm.messageId, elm.message)}
+                  </p>
+                  <hr className={styles.chatBoder} />
+                </React.Fragment>
+              )
             } else {
-              return (<><p className={styles.chatMessages} key={elm.messageId}>{getNtoBrMessage(elm.message)}</p><hr className={styles.chatBoder} /></>)
+              return (
+                <React.Fragment key={elm.messageId}>
+                  <p className={styles.chatMessages}>
+                    {elm.messageId} {getNtoBrMessage(elm.messageId, elm.message)}
+                  </p>
+                  <hr className={styles.chatBoder} />
+                </React.Fragment>
+              )
             }
           })
         }
@@ -124,7 +148,7 @@ const ChatGptApiTest = () => {
         </Button>
       </div>
 
-    </main>
+    </main >
   );
 };
 
