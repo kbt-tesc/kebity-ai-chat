@@ -38,9 +38,10 @@ const ChatGptApiTest = () => {
   const [chatMessages, setChatMessage] = useState<chatMessageDisplayInterface[]>([]);
   const [systemMessage, setSystemMessage] = useState<string>("");
   const [inputChatMessage, setInputChatMessage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const callAI = async () => {
-
+    setIsLoading(true);
     const system: string = systemMessage ? systemMessage : "";
     const chat: string = inputChatMessage ? inputChatMessage : "";
 
@@ -53,13 +54,17 @@ const ChatGptApiTest = () => {
           chat: encodeURI(chat)
         }
       }
-    );
+    ).then(res => {
+      const data = res.data;
+      console.log(data);
+      console.log(data.chat);
 
-    const data = await res.data;
-    console.log(data);
-    console.log(data.chat);
-
-    listUp(data.chat, 'chat');
+      listUp(data.chat, 'chat');
+    }).catch(error => {
+      listUp(error, 'error');
+    }).finally(() => {
+      setIsLoading(false);
+    });
   };
 
   const listUp = (mes: string, type: string) => {
@@ -135,8 +140,9 @@ const ChatGptApiTest = () => {
           onClick={() => {
             callAI();
           }}
+          disabled={isLoading ? true : false}
         >
-          ChatGPTへ送る
+          {isLoading ? "loading" : "ChatGPTへ送る"}
         </Button>
       </div>
 
