@@ -55,15 +55,26 @@ const ChatGptApiTest = () => {
   const listUp = (mes: string, type: string) => {
     setChatMessage((prevList) => {
       upCountId();
-      const newList = [...prevList, { messageId: idCounter, type: type, message: mes }];
+      const newList = [...prevList, { messageId: idCounter, type: type, message: mes.trim() }];
       return newList
     });
   };
 
   const upCountId = () => {
-    var upCount = idCounter + 1;
     setMessageIdCount((oldValue) => { return oldValue + 1 });
   };
+
+  const getNtoBrMessage = (text: string) => {
+    return text.split('\n').map((line, index) => {
+
+      return (
+        <React.Fragment>
+          {line}
+          <br />
+        </React.Fragment>
+      );
+    })
+  }
 
   return (
     <main className={styles.mainContainer}>
@@ -75,13 +86,13 @@ const ChatGptApiTest = () => {
           onChange={(e) => setSystemMessage(e.target.value)}
         />
       </div>
-      <div className={styles.chatMessageDisplayContainer}>
+      <div id="chatMessageDisplayContainer" className={styles.chatMessageDisplayContainer}>
         {
           chatMessages.map(elm => {
             if (elm.type === "user") {
-              return (<><p className={styles.userChatMessages} key={elm.messageId}>{elm.message}</p><hr className={styles.chatBoder} /></>)
+              return (<><p className={styles.userChatMessages} key={elm.messageId}>{getNtoBrMessage(elm.message)}</p><hr className={styles.chatBoder} /></>)
             } else {
-              return (<><p className={styles.chatMessages} key={elm.messageId}>{elm.message}</p><hr className={styles.chatBoder} /></>)
+              return (<><p className={styles.chatMessages} key={elm.messageId}>{getNtoBrMessage(elm.message)}</p><hr className={styles.chatBoder} /></>)
             }
           })
         }
