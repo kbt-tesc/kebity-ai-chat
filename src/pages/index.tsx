@@ -47,7 +47,7 @@ const ChatGptApiTest = () => {
 
     listUp(chat, 'user');
 
-    const res = await axios.get('/api/chatgpt',
+    axios.get('/api/chatgpt',
       {
         params: {
           system: encodeURI(system),
