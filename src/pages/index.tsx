@@ -22,7 +22,7 @@
  * https://platform.openai.com/docs/api-reference/searches
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../components/Button";
 import TextBox from "../components/TextBox";
 import axios from "axios";
@@ -76,6 +76,12 @@ const ChatGptApiTest = () => {
       );
     })
   }
+
+  useEffect(() => {
+    const container = document.getElementById("chatMessageDisplayContainer");
+    if (!container) return;
+    container.scrollTo(0, container.scrollHeight);
+  }, [chatMessages])
 
   return (
     <main className={styles.mainContainer}>
