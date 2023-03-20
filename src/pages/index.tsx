@@ -66,9 +66,10 @@ const ChatGptApiTest = () => {
 
   const getNtoBrMessage = (text: string) => {
     return text.split('\n').map((line, index) => {
-
+      //ここのkeyのWarningの解消の仕方がよくわからない
       return (
-        <React.Fragment>
+        // rome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+        <React.Fragment key={index}>
           {line}
           <br />
         </React.Fragment>
