@@ -113,10 +113,19 @@ const ChatGptApiTest = () => {
                   <hr className={styles.chatBoder} />
                 </React.Fragment>
               )
-            } else {
+            } else if (elm.type === "system") {
               return (
                 <React.Fragment key={elm.messageId}>
-                  <p className={styles.chatMessages}>
+                  <p className={styles.chatMessages} key={elm.messageId}>
+                    {elm.messageId} {getNtoBrMessage(elm.messageId, elm.message)}
+                  </p>
+                  <hr className={styles.chatBoder} />
+                </React.Fragment>
+              )
+            } else if (elm.type === "error") {
+              return (
+                <React.Fragment key={elm.messageId}>
+                  <p className={styles.errorMessages} key={elm.messageId}>
                     {elm.messageId} {getNtoBrMessage(elm.messageId, elm.message)}
                   </p>
                   <hr className={styles.chatBoder} />

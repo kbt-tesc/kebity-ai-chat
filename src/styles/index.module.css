@@ -51,6 +51,11 @@
   border: 1px solid gray;
 }
 
+.errorMessages {
+  margin: 0.3em 0;
+  color: red;
+}
+
 .chatBoder {
   width: 100%;
 }
