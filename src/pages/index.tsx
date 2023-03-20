@@ -22,7 +22,7 @@
  * https://platform.openai.com/docs/api-reference/searches
  */
 
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../components/Button";
 import TextBox from "../components/TextBox";
 import axios from "axios";
@@ -32,14 +32,6 @@ interface chatMessageDisplayInterface {
   messageId: number,
   type: string,
   message: string
-}
-
-interface messageIdInterface {
-  messageId: number
-}
-
-interface messageIdAction {
-  type: string
 }
 
 const ChatGptApiTest = () => {
