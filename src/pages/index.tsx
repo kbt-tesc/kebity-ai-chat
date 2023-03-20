@@ -45,7 +45,8 @@ const ChatGptApiTest = () => {
     const chat: string = inputChatMessage ? inputChatMessage : "";
     listUp(chat, 'user');
 
-    const res = await axios.get(`/api/chatgpt?system=${system}&chat=${chat}`);
+    const res = await axios.get(`/api/chatgpt?system=${encodeURI(system)}&chat=${encodeURI(chat)}`);
+
     const data = await res.data;
     console.log(data);
     console.log(data.chat);
