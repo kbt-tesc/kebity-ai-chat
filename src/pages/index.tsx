@@ -49,8 +49,10 @@ const ChatGptApiTest = () => {
     const chat: string = inputChatMessage ? inputChatMessage : "";
 
     listUp(chat, "user");
+    const client = axios.create();
+    client.defaults.timeout = 40000;
 
-    axios
+    client
       .get("/api/chatgpt", {
         params: {
           apikey: inputApiKey,
