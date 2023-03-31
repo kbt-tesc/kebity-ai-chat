@@ -85,6 +85,13 @@ const ChatGptApiTest = () => {
     });
   };
 
+  const onSystemInputHandler = (value: string) => {
+    setSystemMessage((prevInput) => {
+      localStorage.setItem("systemMessage", value);
+      return value;
+    });
+  };
+
   const getNtoBrMessage = (mesId: number, text: string) => {
     console.info("mesId", mesId, typeof mesId, "text", text, typeof text);
     return String(text)
@@ -177,7 +184,9 @@ const ChatGptApiTest = () => {
           id="chatTextbox"
           className={styles.chatMessageBox}
           placeholder="何か質問を入力"
-          onChange={(e) => setInputChatMessage(e.target.value)}
+          onChange={(e) => {
+            onSystemInputHandler(e.target.value);
+          }}
         />
 
         <Button
