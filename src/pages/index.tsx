@@ -26,70 +26,109 @@ import React, { useState, useEffect } from "react";
 import Button from "../components/Button";
 import TextBox from "../components/TextBox";
 import axios from "axios";
-import styles from '../styles/index.module.css'
+import styles from "../styles/index.module.css";
 
 interface chatMessageDisplayInterface {
-  messageId: number,
-  type: string,
-  message: string
+  messageId: number;
+  type: string;
+  message: string;
 }
 
 const ChatGptApiTest = () => {
-  const [chatMessages, setChatMessage] = useState<chatMessageDisplayInterface[]>([]);
+  const [chatMessages, setChatMessage] = useState<
+    chatMessageDisplayInterface[]
+  >([]);
   const [systemMessage, setSystemMessage] = useState<string>("");
   const [inputChatMessage, setInputChatMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [inputApiKey, setInputApiKey] = useState<string>("");
 
   const callAI = async () => {
     setIsLoading(true);
     const system: string = systemMessage ? systemMessage : "";
     const chat: string = inputChatMessage ? inputChatMessage : "";
 
-    listUp(chat, 'user');
+    listUp(chat, "user");
 
-    axios.get('/api/chatgpt',
-      {
+    axios
+      .get("/api/chatgpt", {
         params: {
-          system: encodeURI(system),
-          chat: encodeURI(chat)
-        }
-      }
-    ).then(res => {
-      const data = res.data;
-      console.log(data);
-      console.log(data.chat);
+          apikey: inputApiKey,
+          system: system,
+          chat: chat,
+          ...getChatMessageForAPI(),
+        },
+        paramsSerializer: {
+          indexes: null,
+        },
+      })
+      .then((res: { data: any }) => {
+        const data = res.data;
+        console.log(data);
+        console.log(data.chat);
 
-      listUp(data.chat, 'chat');
-    }).catch(error => {
-      listUp(error, 'error');
-    }).finally(() => {
-      setIsLoading(false);
-    });
+        listUp(data.chat, "chat");
+      })
+      .catch((error: string) => {
+        listUp(error, "error");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const listUp = (mes: string, type: string) => {
+    console.info("mes", mes, "type", type);
     setChatMessage((prevList) => {
-      const newList = [...prevList, { messageId: prevList.length, type: type, message: mes.trim() }];
-      return newList
+      const newList = [
+        ...prevList,
+        { messageId: prevList.length, type: type, message: String(mes).trim() },
+      ];
+      return newList;
     });
   };
 
   const getNtoBrMessage = (mesId: number, text: string) => {
-    return text.split('\n').map((line, index) => {
-      return (
-        <React.Fragment key={`${mesId}_${index}`}>
-          {line}
-          < br />
-        </React.Fragment >
-      );
-    })
-  }
+    console.info("mesId", mesId, typeof mesId, "text", text, typeof text);
+    return String(text)
+      .split("\n")
+      .map((line, index) => {
+        return (
+          <React.Fragment key={`${mesId}_${index}`}>
+            {line}
+            <br />
+          </React.Fragment>
+        );
+      });
+  };
 
   useEffect(() => {
     const container = document.getElementById("chatMessageDisplayContainer");
     if (!container) return;
     container.scrollTo(0, container.scrollHeight);
-  }, [chatMessages])
+  }, [chatMessages]);
+
+  const getChatMessageForAPI = () => {
+    var query = {};
+    var length = 0;
+    chatMessages.forEach((elm, index) => {
+      /*list.push(elm.type === "user" ? "user" : "assistant");
+      list.push(elm.message);*/
+      const objName = `type${index}`;
+      const objMes = `mes${index}`;
+      length = index + 1;
+      query = {
+        ...query,
+        [objName]: elm.type === "user" ? "user" : "assistant",
+        [objMes]: elm.message,
+      };
+    });
+    query = {
+      ...query,
+      length,
+    };
+    return query;
+  };
 
   return (
     <main className={styles.mainContainer}>
@@ -101,39 +140,40 @@ const ChatGptApiTest = () => {
           onChange={(e) => setSystemMessage(e.target.value)}
         />
       </div>
-      <div id="chatMessageDisplayContainer" className={styles.chatMessageDisplayContainer}>
-        {
-          chatMessages.map(elm => {
-            if (elm.type === "user") {
-              return (
-                <React.Fragment key={elm.messageId}>
-                  <p className={styles.userChatMessages}>
-                    {elm.messageId} {getNtoBrMessage(elm.messageId, elm.message)}
-                  </p>
-                  <hr className={styles.chatBoder} />
-                </React.Fragment>
-              )
-            } else if (elm.type === "chat") {
-              return (
-                <React.Fragment key={elm.messageId}>
-                  <p className={styles.chatMessages} key={elm.messageId}>
-                    {elm.messageId} {getNtoBrMessage(elm.messageId, elm.message)}
-                  </p>
-                  <hr className={styles.chatBoder} />
-                </React.Fragment>
-              )
-            } else if (elm.type === "error") {
-              return (
-                <React.Fragment key={elm.messageId}>
-                  <p className={styles.errorMessages} key={elm.messageId}>
-                    {elm.messageId} {getNtoBrMessage(elm.messageId, elm.message)}
-                  </p>
-                  <hr className={styles.chatBoder} />
-                </React.Fragment>
-              )
-            }
-          })
-        }
+      <div
+        id="chatMessageDisplayContainer"
+        className={styles.chatMessageDisplayContainer}
+      >
+        {chatMessages.map((elm) => {
+          if (elm.type === "user") {
+            return (
+              <React.Fragment key={elm.messageId}>
+                <p className={styles.userChatMessages}>
+                  {elm.messageId} {getNtoBrMessage(elm.messageId, elm.message)}
+                </p>
+                <hr className={styles.chatBoder} />
+              </React.Fragment>
+            );
+          } else if (elm.type === "chat") {
+            return (
+              <React.Fragment key={elm.messageId}>
+                <p className={styles.chatMessages} key={elm.messageId}>
+                  {getNtoBrMessage(elm.messageId, elm.message)}
+                </p>
+                <hr className={styles.chatBoder} />
+              </React.Fragment>
+            );
+          } else if (elm.type === "error") {
+            return (
+              <React.Fragment key={elm.messageId}>
+                <p className={styles.errorMessages} key={elm.messageId}>
+                  {getNtoBrMessage(elm.messageId, elm.message)}
+                </p>
+                <hr className={styles.chatBoder} />
+              </React.Fragment>
+            );
+          }
+        })}
       </div>
       <div className={styles.chatMessageOutContainer}>
         <TextBox
@@ -149,13 +189,22 @@ const ChatGptApiTest = () => {
           onClick={() => {
             callAI();
           }}
-          disabled={isLoading ? true : false}
+          disabled={!inputApiKey || isLoading ? true : false}
         >
           {isLoading ? "loading" : "ChatGPTへ送る"}
         </Button>
       </div>
 
-    </main >
+      <div>
+        <input
+          id="inputApiKeyBox"
+          className={styles.apiInputBox}
+          type="text"
+          placeholder="API 入力"
+          onChange={(e) => setInputApiKey(e.target.value)}
+        />
+      </div>
+    </main>
   );
 };
 
