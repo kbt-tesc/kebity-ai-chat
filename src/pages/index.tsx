@@ -43,6 +43,10 @@ const ChatGptApiTest = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [inputApiKey, setInputApiKey] = useState<string>("");
 
+  useEffect(() => {
+    onSystemInputHandler(localStorage.getItem("systemMessage") || "");
+  }, []);
+
   const callAI = async () => {
     setIsLoading(true);
     const system: string = systemMessage ? systemMessage : "";
@@ -141,7 +145,7 @@ const ChatGptApiTest = () => {
           id="systemTextbox"
           className={styles.systemMessageBox}
           placeholder="設定の表記"
-          onChange={(e) => setSystemMessage(e.target.value)}
+          onChange={(e) => onSystemInputHandler(e.target.value)}
         />
       </div>
       <div
@@ -184,9 +188,7 @@ const ChatGptApiTest = () => {
           id="chatTextbox"
           className={styles.chatMessageBox}
           placeholder="何か質問を入力"
-          onChange={(e) => {
-            onSystemInputHandler(e.target.value);
-          }}
+          onChange={(e) => setInputChatMessage(e.target.value)}
         />
 
         <Button
