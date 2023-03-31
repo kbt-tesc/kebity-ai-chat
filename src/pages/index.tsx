@@ -146,7 +146,7 @@ const ChatGptApiTest = () => {
             return (
               <React.Fragment key={elm.messageId}>
                 <p className={styles.userChatMessages}>
-                  {elm.messageId} {getNtoBrMessage(elm.messageId, elm.message)}
+                  {getNtoBrMessage(elm.messageId, elm.message)}
                 </p>
                 <hr className={styles.chatBoder} />
               </React.Fragment>
@@ -198,6 +198,7 @@ const ChatGptApiTest = () => {
           className={styles.apiInputBox}
           type="text"
           placeholder="API 入力"
+          autoComplete="current-passoword"
           onChange={(e) => setInputApiKey(e.target.value)}
         />
       </div>
