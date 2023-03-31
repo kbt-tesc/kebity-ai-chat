@@ -208,7 +208,7 @@ const ChatGptApiTest = () => {
         <input
           id="inputApiKeyBox"
           className={styles.apiInputBox}
-          type="text"
+          type="password"
           placeholder="API 入力"
           autoComplete="current-passoword"
           onChange={(e) => setInputApiKey(e.target.value)}
