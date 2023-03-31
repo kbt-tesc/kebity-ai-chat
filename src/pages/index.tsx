@@ -144,6 +144,7 @@ const ChatGptApiTest = () => {
           className={styles.systemMessageBox}
           placeholder="設定の表記"
           onChange={(e) => onSystemInputHandler(e.target.value)}
+          value={systemMessage}
         />
       </div>
       <div
