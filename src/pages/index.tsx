@@ -38,14 +38,13 @@ const ChatGptApiTest = () => {
   const [chatMessages, setChatMessage] = useState<
     chatMessageDisplayInterface[]
   >([]);
-  const [systemMessage, setSystemMessage] = useState<string>("");
+  const [systemMessage, setSystemMessage] = useState<string>(() => {
+    const initSystemMessage = localStorage.getItem("systemMessage") || "";
+    return initSystemMessage;
+  });
   const [inputChatMessage, setInputChatMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [inputApiKey, setInputApiKey] = useState<string>("");
-
-  useEffect(() => {
-    onSystemInputHandler(localStorage.getItem("systemMessage") || "");
-  }, []);
 
   const callAI = async () => {
     setIsLoading(true);
@@ -91,7 +90,6 @@ const ChatGptApiTest = () => {
 
   const onSystemInputHandler = (value: string) => {
     setSystemMessage((prevInput) => {
-      localStorage.setItem("systemMessage", value);
       return value;
     });
   };
@@ -109,6 +107,10 @@ const ChatGptApiTest = () => {
         );
       });
   };
+
+  useEffect(() => {
+    localStorage.setItem("systemMessage", systemMessage);
+  }, [systemMessage]);
 
   useEffect(() => {
     const container = document.getElementById("chatMessageDisplayContainer");
