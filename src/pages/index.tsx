@@ -58,6 +58,7 @@ const ChatGptApiTest = () => {
           chat: chat,
           ...getChatMessageForAPI(),
         },
+        timeout: 30000,
       })
       .then((res: { data: any }) => {
         const data = res.data;
