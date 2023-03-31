@@ -22,11 +22,12 @@
  * https://platform.openai.com/docs/api-reference/searches
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, InputHTMLAttributes } from "react";
 import Button from "../components/Button";
 import TextBox from "../components/TextBox";
 import axios from "axios";
 import styles from "../styles/index.module.css";
+import { StringDecoder } from "string_decoder";
 
 interface chatMessageDisplayInterface {
   messageId: number;
@@ -42,6 +43,7 @@ const ChatGptApiTest = () => {
   const [inputChatMessage, setInputChatMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [inputApiKey, setInputApiKey] = useState<string>("");
+  const [encryptKey, setEncryptKey] = useState<string>("");
 
   const callAI = async () => {
     setIsLoading(true);
@@ -55,7 +57,7 @@ const ChatGptApiTest = () => {
     client
       .get("/api/chatgpt", {
         params: {
-          apikey: inputApiKey,
+          apikey: encryptKey,
           system: system,
           chat: chat,
           ...getChatMessageForAPI(),
@@ -111,6 +113,7 @@ const ChatGptApiTest = () => {
 
   useEffect(() => {
     setSystemMessage(localStorage.getItem("systemMessage") || "");
+    setEncryptKey(localStorage.getItem("encryptedKey") || "")
   }, [systemMessage]);
 
   useEffect(() => {
@@ -138,6 +141,42 @@ const ChatGptApiTest = () => {
     };
     return query;
   };
+
+  const saveClickHandler = async () => {
+    setIsLoading(true);
+
+    await axios
+      .get("/api/crypt", {
+        params: {
+          apiKey: inputApiKey
+        }
+      })
+      .then((res) => {
+        const data = res.data;
+        setEncryptKey(oldValue => {
+          const key = data.encryptedKey as string;
+          localStorage.setItem("encryptedKey", key);
+          return key;
+        });
+        setInputApiKey("")
+
+      })
+      .catch((error: string) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
+
+  const clearClickHandler = async () => {
+    setEncryptKey("");
+  }
+
+  const getEncryptKey = () => {
+    console.log(encryptKey)
+    return encryptKey;
+  }
 
   return (
     <main className={styles.mainContainer}>
@@ -200,22 +239,31 @@ const ChatGptApiTest = () => {
             callAI();
           }}
           disabled={
-            !inputApiKey || !inputChatMessage || isLoading ? true : false
+            !(encryptKey && inputChatMessage) || isLoading
           }
         >
           {isLoading ? "loading" : "ChatGPTへ送る"}
         </Button>
       </div>
 
-      <div>
-        <input
-          id="inputApiKeyBox"
-          className={styles.apiInputBox}
-          type="password"
-          placeholder="API 入力"
-          autoComplete="current-passoword"
-          onChange={(e) => setInputApiKey(e.target.value)}
-        />
+      <div className={styles.apiInputContainer}>
+        {encryptKey ? <div className={styles.apiInputBox} /> :
+          <input
+            id="inputApiKeyBox"
+            className={styles.apiInputBox}
+            placeholder="API 入力"
+            autoComplete="current-passoword"
+            onChange={(e) => setInputApiKey(e.target.value)}
+            value={inputApiKey}
+            disabled={encryptKey ? true : false}
+          />}
+        <p>{encryptKey ? 'Key保存済み' : ''}</p>
+        <button className={styles.apiSaveButton}
+          onClick={(e) => saveClickHandler()}
+          disabled={!inputApiKey ? true : false}>保存</button>
+        <button className={styles.apiSaveButton}
+          onClick={(e) => clearClickHandler()}
+          disabled={!encryptKey ? true : false}>再入力</button>
       </div>
     </main>
   );

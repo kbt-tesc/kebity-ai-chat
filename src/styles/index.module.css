@@ -65,29 +65,39 @@
 .chatMessageOutContainer {
   margin: 0.5em;
   grid-area: input;
-  justify-content: space-between;
+  display: flex;
+  flex-direction: row;
 }
 
 .chatMessageBox {
   padding: 0.5em;
-  width: calc(100% - 12em);
+  flex-grow: 1;
   height: 100%;
   vertical-align: top;
 }
 
 .chatMessageOutButton {
   margin-left: 0.5em;
-  width: 11.5em;
+  width: 9em;
   height: 100%;
   vertical-align: top;
 }
 
 /** apiKey入力 **/
-
-.apiInputBox {
-  margin-left: 0.5em;
-  margin-right: 1em;
-  padding: 0.5em;
+.apiInputContainer {
   grid-area: apikey;
-  width: calc(100% - 1em);
+  display: flex;
+  flex-direction: row;
+  column-gap: 0.5em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+  margin-bottom: 0.5em;
+  align-items: center;
+}
+.apiInputBox {
+  flex-grow: 1;
+  padding: 0.5em;
+}
+.apiSaveButton {
+  width: 4em;
 }
