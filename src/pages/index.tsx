@@ -120,8 +120,6 @@ const ChatGptApiTest = () => {
     var query = {};
     var length = 0;
     chatMessages.forEach((elm, index) => {
-      /*list.push(elm.type === "user" ? "user" : "assistant");
-      list.push(elm.message);*/
       const objName = `type${index}`;
       const objMes = `mes${index}`;
       length = index + 1;
