@@ -186,7 +186,9 @@ const ChatGptApiTest = () => {
           onClick={() => {
             callAI();
           }}
-          disabled={!inputApiKey || isLoading ? true : false}
+          disabled={
+            !inputApiKey || !inputChatMessage || isLoading ? true : false
+          }
         >
           {isLoading ? "loading" : "ChatGPTへ送る"}
         </Button>
