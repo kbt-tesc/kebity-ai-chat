@@ -58,9 +58,6 @@ const ChatGptApiTest = () => {
           chat: chat,
           ...getChatMessageForAPI(),
         },
-        paramsSerializer: {
-          indexes: null,
-        },
       })
       .then((res: { data: any }) => {
         const data = res.data;
