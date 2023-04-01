@@ -57,7 +57,7 @@ export default async function handler(
 		return;
 	}
 
-	let chatHistory: ChatCompletionRequestMessage[] = [];
+	const chatHistory: ChatCompletionRequestMessage[] = [];
 	if (historyLength) {
 		const count = parseInt(historyLength);
 		for (let index = 0; index < count; index++) {
@@ -69,7 +69,7 @@ export default async function handler(
 			});
 		}
 	}
-	var response = await call35Turbo(system, chatHistory, chatmsg);
+	const response = await call35Turbo(system, chatHistory, chatmsg);
 	res.status(200).json({ chat: response });
 }
 
@@ -87,6 +87,6 @@ function getDecryptedKey(encryptKey: string) {
 	const cipheredData = cipher.update(encryptData);
 	const finalBuf = Buffer.concat([cipheredData, cipher.final()]);
 	const finalData = finalBuf.toString("utf8");
-	console.log("finalData", finalData);
+	console.log("use key encrypted.");
 	return finalData;
 }
