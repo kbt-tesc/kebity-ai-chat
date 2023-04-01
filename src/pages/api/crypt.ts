@@ -23,6 +23,6 @@ function getEncryptedKey(api: string) {
 	const cipheredData = cipher.update(Buffer.from(api));
 	const finalBuf = Buffer.concat([iv, cipheredData, cipher.final()]);
 	const finalData = finalBuf.toString("base64");
-	console.log("finalData", finalData);
+	console.log("use key encrypted.");
 	return { encryptedKey: finalData };
 }
